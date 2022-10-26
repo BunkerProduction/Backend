@@ -115,9 +115,11 @@ case "$( uname )" in                #(
 esac
 
 CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
-
+JAVA_HOME=C:/Program Files/Java/jdk-17.0.4.1
 
 # Determine the Java command to use to start the JVM.
+# shellcheck disable=SC1046
+# shellcheck disable=SC1073
 if [ -n "$JAVA_HOME" ] ; then
     if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
         # IBM's JDK on AIX uses strange locations for the executables
@@ -137,7 +139,6 @@ else
 
 Please set the JAVA_HOME variable in your environment to match the
 location of your Java installation."
-fi
 
 # Increase the maximum file descriptors if we can.
 if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
