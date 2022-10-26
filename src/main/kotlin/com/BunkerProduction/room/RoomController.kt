@@ -78,15 +78,22 @@ class RoomController () {
         make_set_of_votes(players.votedFor, sessionID)
     }
     fun add_last_vote(players: Vote, sessionID: String){
-        var countVotes = gamemodel[sessionID]?.votes?.get(players.player)
-        countVotes = countVotes!! + 1
-        var playerVoted = players_pla_votes[sessionID]?.get(players.player)
-        playerVoted?.add(players.votedFor)
-        if (playerVoted != null) {
-            players_pla_votes[sessionID]?.put(players.player, playerVoted)
-        }
+        try{
+            gamemodel[sessionID]?.votes?.get(players.player)
+            var countVotes = gamemodel[sessionID]?.votes?.get(players.player)
+            countVotes = countVotes!! + 1
+            var playerVoted = players_pla_votes[sessionID]?.get(players.player)
+            playerVoted?.add(players.votedFor)
+            if (playerVoted != null) {
+                players_pla_votes[sessionID]?.put(players.player, playerVoted)
+            }
 //            print(players_pla_votes[sessionID].toString())
-        gamemodel[sessionID]?.votes?.put(players.player, countVotes)
+            gamemodel[sessionID]?.votes?.put(players.player, countVotes)
+        }
+        catch(e: Exception){
+            print("Ошибка, не найден игрок, за которого проголосовали last_vote")
+        }
+
     }
     fun change_gamestate(state: Enum<GameState>, sessionID: String){
         gamemodel[sessionID]?.gameState = state as GameState
