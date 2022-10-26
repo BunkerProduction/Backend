@@ -79,7 +79,7 @@ class RoomController () {
     }
     fun add_last_vote(players: Vote, sessionID: String){
         try{
-            gamemodel[sessionID]?.votes?.get(players.player)
+            if(gamemodel[sessionID]?.votes?.contains(players.player) == true){
             var countVotes = gamemodel[sessionID]?.votes?.get(players.player)
             countVotes = countVotes!! + 1
             var playerVoted = players_pla_votes[sessionID]?.get(players.player)
@@ -90,8 +90,14 @@ class RoomController () {
 //            print(players_pla_votes[sessionID].toString())
             gamemodel[sessionID]?.votes?.put(players.player, countVotes)
         }
+            else
+            {
+               var countVotes = 1
+                gamemodel[sessionID]?.votes?.put(players.player, countVotes)
+            }
+        }
         catch(e: Exception){
-            print("Ошибка, не найден игрок, за которого проголосовали last_vote")
+            print("Ошибка, не найден игрок, за которого проголосовали last_vote\n")
         }
 
     }
@@ -300,6 +306,8 @@ class RoomController () {
         print("id_posledn $m\n")
         print("playerID $playerID\n")
 
+        print("ids перед инитом хоста$ids ")
+
             if(ids.indexOf(playerID)!=0) {
                 indexHOST = ids.indexOf(playerID)
                 var element = ids[0]
@@ -373,6 +381,12 @@ class RoomController () {
                 }
                 if(ids.indexOf(playerID)!=0) {
                     indexHOST = ids.indexOf(playerID)
+                    if(indexHOST == -1)
+                    {
+                        hosts[sessionID] = ids[0]
+                        indexHOST = 0
+                    }
+                    print("\n indexHOST $indexHOST \n")
                     var element = ids[0]
                     ids[indexHOST] = element
                     if (playerID != null) {
