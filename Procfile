@@ -1,0 +1,1 @@
+web: ./build/install/com.BunkerProduction.ktor-bunker/bin/com.BunkerProduction.ktor-bunker
