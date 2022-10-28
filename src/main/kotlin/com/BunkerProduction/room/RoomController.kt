@@ -265,9 +265,9 @@ class RoomController () {
     suspend fun get_gamemodel_after_voting(sessionID: String)
     {
         change_turn(sessionID, isFirstLoop = false, for_status = true)
-        if(gamemodel[sessionID]?.initialNumberOfPlayers  == 1)
+        if(gamemodel[sessionID]?.initialNumberOfPlayers!! <= 2)
         {
-            change_gamestate(state = GameState.fishing, sessionID)
+            change_gamestate(state = GameState.finish, sessionID)
         }
 //        members.values.forEach{ member ->
 //            if(member.sessionID == sessionID)
@@ -316,6 +316,10 @@ class RoomController () {
                     ids[0] = playerID
                 }
             }
+        if(ids.count() <= 2)
+        {
+            gamemodel[sessionID]?.gameState  = GameState.finish
+        }
         gamemodel[sessionID]?.initialNumberOfPlayers  = ids.count()
         print("ids_relocated $ids\n\n")
 
@@ -366,9 +370,9 @@ class RoomController () {
                 members.remove(memberSocket.toString())//удаление из хэш карты Members
                 players_num_votes[sessionID]?.clear()//Очистка карт голосования
                 players_pla_votes[sessionID]?.clear()
-                if(ids.count() < 2)
+                if(ids.count() <= 2)
                 {
-                    gamemodel[sessionID]?.gameState  = GameState.fishing
+                    gamemodel[sessionID]?.gameState  = GameState.finish
                 }
                 print("порядко игроков в списке $ids\n")
 //                index_id = 0;
@@ -393,9 +397,9 @@ class RoomController () {
                         ids[0] = playerID
                     }
                 }
-                if(ids.count() == 1)
+                if(ids.count() <= 2)
                 {
-                    gamemodel[sessionID]?.gameState  = GameState.fishing
+                    gamemodel[sessionID]?.gameState  = GameState.finish
                 }
                 print("порядко игроков в списке $ids ПОСЛЕ УДАЛЕНИЯ\n")
                 var kicked_message = kicked_members[memberSocket.toString()]?.id?.let { Kicked_message(type = "kickedPlayer", id = it) }
@@ -414,12 +418,12 @@ class RoomController () {
                 gamemodel[sessionID]?.set_of_voters = null
                 gamemodel[sessionID]?.votes = null
                 gamemodel[sessionID]?.turn = ids[index_id]
-                if(ids.count() > 1) {
+                if(ids.count() > 2) {
                     gamemodel[sessionID]?.gameState = GameState.normal
                 }
                 else
                 {
-                    gamemodel[sessionID]?.gameState = GameState.fishing
+                    gamemodel[sessionID]?.gameState = GameState.finish
                 }
                 print("порядко игроков в списке $ids\n")
                 Thread.sleep(2000);
@@ -458,15 +462,15 @@ class RoomController () {
                 print("Список кикнутых\n")
                 print(kicked_members)
 
-                if(ids.count() < 2)
+                if(ids.count() <= 2)
                 {
-                    change_gamestate(state = GameState.fishing, sessionID)
+                    change_gamestate(state = GameState.finish, sessionID)
                 }
             }
         }
-        if(ids.count() < 2)
+        if(ids.count() <= 2)
         {
-            change_gamestate(state = GameState.fishing, sessionID)
+            change_gamestate(state = GameState.finish, sessionID)
         }
         if((!isFirstLoop)&&(gamemodel[sessionID]?.gameState != GameState.voting)) {
             if((index_id + 1 <= ids.count())&&(!for_status))
@@ -479,22 +483,22 @@ class RoomController () {
         print("count_ids ${ids.count()}\n")
         print("порядко игроков в списке $ids\n")
         print(members.values)
-        if(ids.count() == 1)
+        if(ids.count() <= 2)
         {
-            gamemodel[sessionID]?.gameState  = GameState.fishing
+            gamemodel[sessionID]?.gameState  = GameState.finish
         }
-        if((index_id == ids.count())&&(gamemodel[sessionID]?.gameState  != GameState.fishing))
+        if((index_id == ids.count())&&(gamemodel[sessionID]?.gameState  != GameState.finish))
         {
             if((gamemodel[sessionID]?.round!! >= 1)&&(gamemodel[sessionID]?.round!! <= 5)) {
                 change_gamestate(state = GameState.voting, sessionID)
                 print("\nTRIG\n")
             }
             else {
-                if(ids.count() > 1) {
+                if(ids.count() > 2) {
                     change_gamestate(state = GameState.normal, sessionID)
                 }
                 else {
-                    change_gamestate(state = GameState.fishing, sessionID)
+                    change_gamestate(state = GameState.finish, sessionID)
                 }
             }
             index_id = 0
@@ -512,7 +516,7 @@ class RoomController () {
         else {
             print("index_id $index_id\n")
             print("ids $ids\n")
-            if(gamemodel[sessionID]?.gameState  != GameState.fishing)
+            if(gamemodel[sessionID]?.gameState  != GameState.finish)
             gamemodel[sessionID]?.turn = ids[index_id]
         }
 

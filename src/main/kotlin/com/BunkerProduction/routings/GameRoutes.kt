@@ -23,6 +23,7 @@ class Connection(val session: DefaultWebSocketSession) {
     val name = "user${lastId.getAndIncrement()}"
 }
 
+const val MinPlayers = 3
 fun Control_Version(oldVersionName: String?, newVersionName: String): Boolean {
     var oldNumbers = oldVersionName?.split(".")
     var newNumbers = newVersionName.split(".")
@@ -160,8 +161,18 @@ fun Route.gameSocket(roomController: RoomController) {
                     send(Json.encodeToJsonElement(roomController.get_waitingRoom(session.sessionID)).toString())
                 }
                 if ((frame is Frame.Text) && (frame.readText() == "game")) {
-                    roomController.change_game_status(session.sessionID)
-                    roomController.gamemodelToMembers(session.sessionID)
+                    if(roomController.getPlayers_NONEsocket(session.sessionID).count() >=3) {
+                        roomController.change_game_status(session.sessionID)
+                        roomController.gamemodelToMembers(session.sessionID)
+                    }
+                    else
+                    {
+                        var error = Error(
+                            typeModel = Type_Model.error,
+                            message = "TooFewPlayers"
+                        )
+                        send(Json.encodeToJsonElement(error).toString())
+                    }
                 }
                 if ((frame is Frame.Text) && (frame.readText() == "game_models")) {
                     send(Json.encodeToJsonElement(roomController.getgameModels()).toString())

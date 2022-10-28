@@ -1,7 +1,7 @@
 package com.BunkerProduction.enums
 
 enum class GameState {
-    normal, voting, fishing
+    normal, voting, finish
 }
 
 //EnumClass.valueOf(value: String): EnumClass
