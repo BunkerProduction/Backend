@@ -168,7 +168,7 @@ fun Route.gameSocket(roomController: RoomController) {
                     else
                     {
                         var error = Error(
-                            typeModel = Type_Model.error,
+                            type = Type_Model.error,
                             message = "TooFewPlayers"
                         )
                         send(Json.encodeToJsonElement(error).toString())
